@@ -11,12 +11,11 @@
         .btn-add { display: block; background: #27ae60; color: white; text-align: center; padding: 16px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-bottom: 30px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-add:hover { background: #219150; transform: translateY(-2px); }
         .post-card { background: white; padding: 25px; margin-bottom: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 6px solid #1a5276; overflow: hidden; }
-        .post-img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .post-img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; display: none; }
         h3 { color: #1a5276; margin: 0 0 12px 0; font-size: 1.5em; }
         .post-content { line-height: 1.7; font-size: 1.1em; color: #444; white-space: pre-wrap; }
         .author-info { margin-top: 20px; font-size: 0.9em; color: #666; border-top: 1px solid #eee; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .name-tag { color: #d35400; font-weight: bold; background: #fef5e7; padding: 4px 10px; border-radius: 4px; }
-        #loading { text-align: center; font-size: 1.2em; color: #666; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -27,16 +26,16 @@
 </header>
 
 <div class="container">
-    <!-- आपका असली गूगल फॉर्म लिंक यहाँ सेट है -->
+    <!-- आपका पुराना गूगल फॉर्म लिंक यहाँ डालें -->
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfL56kIkjL1DTFjuwwbnhvn9GFvBcFmc7l3IoSIFEzdiZqhVQ/viewform?usp=sf_link" target="_blank" class="btn-add"> + अपनी जानकारी और फोटो साझा करें </a>
 
     <div id="content-area">
-        <div id="loading">उड़वारिया की जानकारियाँ लोड हो रही हैं...</div>
+        <p style="text-align:center;">उड़वारिया की जानकारियाँ लोड हो रही हैं...</p>
     </div>
 </div>
 
 <script>
-    // आपकी असली Google Sheet ID यहाँ सेट है
+    // आपकी Google Sheet ID यहाँ सेट है
     const sheetID = '13pXTGuq18pjmrELqdN7rLnLN5p_nwg0DIqlqHA0_agw';
     const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
@@ -49,40 +48,35 @@
             let html = '';
 
             rows.forEach(row => {
-                // कॉलम मैपिंग: A=0(Name), B=1(Subject), C=2(Details), D=3(Photo), E=4(Status)
-                const name = row.c[0] ? row.c[0].v : "ग्रामीण निवासी";
+                // वापस पुराने कॉलम क्रम पर (मोबाइल नंबर हटा दिया गया है)
+                // A=नाम(0), B=विषय(1), C=विवरण(2), D=फोटो(3), E=स्टेटस(4)
+                const name = row.c[0] ? row.c[0].v : "ग्रामीण";
                 const subject = row.c[1] ? row.c[1].v : "विशेष सूचना";
                 const details = row.c[2] ? row.c[2].v : "";
                 let photoUrl = row.c[3] ? row.c[3].v : "";
                 const status = row.c[4] ? row.c[4].v : "";
 
-                // केवल एडमिन द्वारा 'Approved' की गई जानकारी ही दिखेगी
                 if (status === "Approved") {
-                    let finalImgTag = '';
-                    // गूगल ड्राइव फोटो लिंक को डायरेक्ट लिंक में बदलना
+                    let imgTag = '';
                     if(photoUrl && photoUrl.includes('id=')) {
-                        let photoId = photoUrl.split('id=')[1].split('&')[0];
-                        let directLink = `https://lh3.googleusercontent.com/d/${photoId}`;
-                        finalImgTag = `<img src="${directLink}" class="post-img" style="display:block;" onerror="this.style.display='none'">`;
+                        let id = photoUrl.split('id=')[1].split('&')[0];
+                        imgTag = `<img src="https://lh3.googleusercontent.com/d/${id}" class="post-img" style="display:block;">`;
                     }
 
                     html += `
                     <div class="post-card">
-                        ${finalImgTag}
+                        ${imgTag}
                         <h3>${subject}</h3>
                         <div class="post-content">${details}</div>
                         <div class="author-info">
                             <span>योगदानकर्ता: <span class="name-tag">${name}</span></span>
-                            <small>ग्राम उड़वारिया पोर्टल</small>
+                            <small>उड़वारिया पोर्टल</small>
                         </div>
                     </div>`;
                 }
             });
 
-            document.getElementById('content-area').innerHTML = html || "<p style='text-align:center; padding: 50px;'>अभी कोई जानकारी उपलब्ध नहीं है। कृपया जानकारी भेजें और एडमिन के अप्रूवल का इंतज़ार करें।</p>";
-        })
-        .catch(err => {
-            document.getElementById('content-area').innerHTML = "<p style='text-align:center; color:red;'>डेटा लोड करने में समस्या आई। कृपया पक्का करें कि आपने गूगल शीट को 'Publish to Web' किया है।</p>";
+            document.getElementById('content-area').innerHTML = html || "<p style='text-align:center;'>अभी कोई जानकारी उपलब्ध नहीं है। कृपया एडमिन अप्रूवल का इंतज़ार करें।</p>";
         });
 </script>
 
