@@ -26,7 +26,7 @@
 </header>
 
 <div class="container">
-    <!-- आपका नया गूगल फॉर्म लिंक यहाँ सेट है -->
+    <!-- आपका नया गूगल फॉर्म लिंक यहाँ अपडेट कर दिया गया है -->
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSe4Z6Cw7pPBCM6X4QVekyMofV9kblZdBSRoHQgVKjZ9g2nMbg/viewform?usp=sf_link" target="_blank" class="btn-add"> + अपनी जानकारी और फोटो साझा करें </a>
 
     <div id="content-area">
@@ -48,15 +48,14 @@
             let html = '';
 
             rows.forEach(row => {
-                // कॉलम मैपिंग (A=0, B=1, C=2, D=3, E=4)
-                // A: नाम, B: विषय, C: विवरण, D: फोटो लिंक, E: स्टेटस
+                // कॉलम मैपिंग: A=0(नाम), B=1(विषय), C=2(विवरण), D=3(फोटो), E=4(स्टेटस)
                 const name = row.c[0] ? row.c[0].v : "ग्रामीण";
                 const subject = row.c[1] ? row.c[1].v : "विशेष सूचना";
                 const details = row.c[2] ? row.c[2].v : "";
                 let photoUrl = row.c[3] ? row.c[3].v : "";
                 const status = row.c[4] ? row.c[4].v : "";
 
-                // केवल 'Approved' होने पर ही वेबसाइट पर दिखेगा
+                // केवल 'Approved' होने पर ही दिखेगा
                 if (status === "Approved") {
                     let finalImgTag = '';
                     if(photoUrl && photoUrl.includes('id=')) {
@@ -80,7 +79,7 @@
             document.getElementById('content-area').innerHTML = html || "<p style='text-align:center; padding: 50px;'>अभी कोई जानकारी उपलब्ध नहीं है। कृपया फॉर्म भरें और एडमिन के अप्रूवल का इंतज़ार करें।</p>";
         })
         .catch(err => {
-            document.getElementById('content-area').innerHTML = "<p style='text-align:center; color:red; padding: 50px;'>डेटा लोड करने में समस्या। कृपया पक्का करें कि शीट 'Publish to Web' है।</p>";
+            document.getElementById('content-area').innerHTML = "<p style='text-align:center; color:red; padding: 50px;'>डेटा लोड करने में समस्या। कृपया चेक करें कि शीट 'Publish to Web' है या नहीं।</p>";
         });
 </script>
 
